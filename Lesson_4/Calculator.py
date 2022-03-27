@@ -20,7 +20,10 @@ elif zn == "3":
     print("\n_____Ваш Результат_____:",num2text(per1*per2))
 
 elif zn == "4":
-    print("\n_____Ваш Результат_____:",num2text(per1/per2))
+    if per2 == 0:
+        print("\n_____На ноль не делится_____")
+    else:
+        print("\n_____Ваш Результат_____:",num2text(per1/per2))
 
 elif zn == "5":
     print("\n_____Ваш Результат_____:",num2text(per1**per2))

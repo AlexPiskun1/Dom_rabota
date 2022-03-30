@@ -1,6 +1,6 @@
 import decimal
 
-from num2t4ru import num2text
+
 from num2t4ru import decimal2text
 
 int_units = ((u'целых', u'целых', u'целых'), 'm')

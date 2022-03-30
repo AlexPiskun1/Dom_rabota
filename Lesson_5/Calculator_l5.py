@@ -1,14 +1,30 @@
 
-n=0
-while True:
-    n +=1
-    a,b,c = (input("Введите данные").split())
 
-    if a == "Стоп":
+n= 0
+
+while True:
+    a = input("Введите действие через пробел").split()
+    n +=1
+    if a[0] == "стоп":
         break
-    elif b == "Стоп":
-        break
-    elif c == "Стоп":
-        break
+    elif a[1] == "+":
+        print("Ответ", float(a[0])+float(a[2]))
+        print("Номера вашей операции", n)
+    elif a[1] == "-":
+        print("Ответ", float(a[0])-float(a[2]))
+        print("Номера вашей операции", n)
+    elif a[1] == "*":
+        print("Ответ", float(a[0])*float(a[2]))
+        print("Номера вашей операции", n)
+    elif a[1] == "/":
+        if a[2] == "0":
+            print("На ноль не делится")
+        else:
+            print("Ответ", float(a[0]) / float(a[2]))
+            print("Номера вашей операции", n)
+    elif a[1] == "**":
+        print("Ответ", float(a[0])**float(a[2]))
+        print("Номера вашей операции", n)
     else:
-        print("Действие №", n)
+        print("Некоректный ввод данных")
+        print("Номера вашей операции",n)

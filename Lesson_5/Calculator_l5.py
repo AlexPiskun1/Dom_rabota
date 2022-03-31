@@ -22,6 +22,7 @@ while True:
             elif a[1] == "/":
                 if a[2] == "0":
                     print("На ноль не делится")
+                    print("Номера вашей операции", n)
                 else:
                     print("Ответ", float(a[0]) / float(a[2]))
                     print("Номера вашей операции", n)

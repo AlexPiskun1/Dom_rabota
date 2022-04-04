@@ -4,9 +4,16 @@
 
 Можно пользоваться только функциями, операторами и условиями.
 """
-def sum_of_numbers(s):
-    return sum(map(int, s))
+
+def sum_n(x):
+    a = list(x)
+    def sum_n2(a):
+        return sum(map(int,a))
+    return sum_n2(a)
 
 
-a = input("Чувачек, введи циферки")
-print(sum_of_numbers(a))
+b = "123456"
+
+print(sum_n(b))
+
+

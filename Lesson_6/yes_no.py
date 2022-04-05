@@ -12,7 +12,7 @@ def yes_or_no(l: list):
         else:
             l2.append(i)
             print("No")
-    print(l2)
+
 
 
 a = [1,2,1,4,3,2,1]

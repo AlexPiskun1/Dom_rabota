@@ -3,15 +3,17 @@
 проходит по нему и выводит Yes, если число уже встречалось и No, если нет
 """
 
-def yes_no (x):
-    x1 = set(x)
-    if len(x) == len(x1):
-        print("No")
-    else:
-        print("Yes")
 
-a = [1,2,3,4,5]
-b = [1,2,3,4,2]
+def yes_or_no(l: list):
+    l2=[]
+    for i in l:
+        if l2.count(i) > 0:
+            print("Yes")
+        else:
+            l2.append(i)
+            print("No")
+    print(l2)
 
-yes_no(a)
-yes_no(b)
+
+a = [1,2,1,4,3,2,1]
+yes_or_no(a)

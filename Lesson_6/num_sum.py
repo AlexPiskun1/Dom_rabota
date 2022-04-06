@@ -5,15 +5,12 @@
 Можно пользоваться только функциями, операторами и условиями.
 """
 
-def sum_n(x):
-    a = list(x)
-    def sum_n2(a):
-        return sum(map(int,a))
-    return sum_n2(a)
+def sum_n(n, s=0):
+    if s==len(n): return 0
+    return sum_n(n,s+1) + int(n[s])
+
+n = 123456
 
 
-b = "123456"
-
-print(sum_n(b))
-
+print(sum_n(str(n)))
 

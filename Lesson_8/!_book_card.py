@@ -12,14 +12,15 @@
 """
 from datetime import date
 
-#CURRENT_YEAR = date.today().
+CURRENT_YEAR = date.today()
+
 
 class BookCard:
     __author: str
     __title: str
     __year: int
 
-    def __init__(self,__author,__title,__year):
+    def __init__(self,__author:str,__title:str,__year:int):
         self.__author = __author
         self.__title = __title
         self.__year = __year
@@ -36,10 +37,10 @@ class BookCard:
 
     @author_in.setter
     def author_in(self,author):
-        self.__author = author
-        if author == int:
-           raise ValueError ("Невверный ввод данных")
-
+        if type(author) is str:
+            self.__author = author
+        else:
+            raise ValueError ("Неввенрый ввод")
 
 
     @property
@@ -48,7 +49,11 @@ class BookCard:
 
     @title_in.setter
     def title_in(self,title):
-        self.__title = title
+        if type(title) is str:
+            self.__title = title
+        else:
+            raise ValueError ("Неввенрый ввод")
+
 
     @property
     def year_in(self):
@@ -56,7 +61,10 @@ class BookCard:
 
     @year_in.setter
     def year_in(self, year):
-        self.__year = year
+        if  CURRENT_YEAR.year >= year >0:
+            self.__year = year
+        else:
+            raise ValueError ("Неверный ввод даты")
 
 
     def get_list(self):
@@ -78,7 +86,6 @@ for i in l:
     print(i.get_list())
 
 print("-------------")
-
 a1.author_in = "Толстой"
 print(a1.author_in)
 
@@ -88,12 +95,14 @@ print(a1.title_in)
 a1.year_in = 1873
 print(a1.year_in)
 
-a2.author_in = "Ден Брайнa"
+a2.author_in = "Ден Браун"
 a2.title_in = "Код Давинча"
-a2.year_inК = 2010
-
+a2.year_in = 2010
 print(a2.get_init())
 
-a4 = BookCard(111, 3333, 2022) # Ввожу не str, все равно принимает
+4
 
-print(a4.get_init())
+a4 = BookCard(111, 3333, 2022) # Ввожу не str, все равно принимает
+print(a4.get_init()) # Возвращает
+
+

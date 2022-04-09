@@ -24,8 +24,13 @@ class BookCard:
         self.__author = __author
         self.__title = __title
         self.__year = __year
-    #def __cmp__(self, other):
-       #return (self.__year, other.__year)
+    def __cmp__(self, other):
+        if self.__year < other:  # Правило сравнения (такое же, как правило сравнения по умолчанию)
+            return other - self.__year
+        elif self.__year > other:
+            return self.__year - other
+        else:
+            return 0
 
 
     def get_init(self):
@@ -106,3 +111,7 @@ a4 = BookCard(111, 3333, 2022) # Ввожу не str, все равно прин
 print(a4.get_init()) # Возвращает
 
 
+print(a3.__cmp__(2015))
+
+for i in l:
+    print(i.__cmp__(2022))

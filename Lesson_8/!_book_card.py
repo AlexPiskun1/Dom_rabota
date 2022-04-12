@@ -33,7 +33,7 @@ class BookCard:
             return 0
 
 
-    def get_init(self):
+    def get_info(self):
         return (f"Автор- {self.__author}\nНазвание книги - {self.__title}\nГод издания - {self.__year}")
 
     @property
@@ -84,7 +84,7 @@ a1 = BookCard("Vasya", "Don", 2005)
 a2 = BookCard("Petya", "Gav", 1998)
 a3 = BookCard("Kolya", "Hvost", 2022)
 
-print(a1.get_init())
+print(a1.get_info())
 
 l=[a1,a2,a3]
 for i in l:
@@ -103,15 +103,22 @@ print(a1.year_in)
 a2.author_in = "Ден Браун"
 a2.title_in = "Код Давинча"
 a2.year_in = 2010
-print(a2.get_init())
+print(a2.get_info())
 
 4
 
 a4 = BookCard(111, 3333, 2022) # Ввожу не str, все равно принимает
-print(a4.get_init()) # Возвращает
+print(a4.get_info()) # Возвращает
 
 
 print(a3.__cmp__(2015))
 
 for i in l:
     print(i.__cmp__(2022))
+
+t={a1,a2,a3}
+for i in t:
+    y= i.get_list()
+print("-----------")
+print(y)
+print(y[2])

@@ -20,10 +20,10 @@ class BookCard:
     __title: str
     __year: int
 
-    def __init__(self,__author:str,__title:str,__year:int):
-        self.__author = __author
-        self.__title = __title
-        self.__year = __year
+    def __init__(self,author:str,title:str,year:int):
+        self.__author = author
+        self.__title = title
+        self.__year = year
     def __cmp__(self, other):
         if self.__year < other:  # Правило сравнения (такое же, как правило сравнения по умолчанию)
             return other - self.__year

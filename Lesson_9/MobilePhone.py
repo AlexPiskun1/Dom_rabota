@@ -21,6 +21,7 @@
 """
 import  datetime
 import time
+import random
 
 class MobilePhone:
     brand: str
@@ -28,6 +29,8 @@ class MobilePhone:
     issue_year: str
     is_busy: bool = False
     list1: list
+    sms: list
+    call_time: str
 
 
 
@@ -37,54 +40,81 @@ class MobilePhone:
         self.issue_year = issue_year
         self.is_busy = is_busy
         self.list1 = []
+        self.sms = []
+
 
 
 
     def __str__(self):
-        return f"{self.brand} \n{self.model} \n{self.issue_year}\n{self.is_busy}\n{self.list1}"
+        return f"{self.brand} \n{self.model} \n{self.issue_year}\n{self.is_busy}"
 
 
-    def receive_call(self,name,list1 = list):
+    def receive_call(self,name,list1 = list, call_time = 0):
         if self.is_busy is False:
+            self.call_time = call_time
+            start_call = datetime.datetime.now()
             self.name = name
             self.is_busy = True
             hist1 = datetime.datetime.now()
             hist2 = hist1.strftime("%H:%M:%S %d-%m-%Y")
-            print( f"Звонит {self.name}, Время {hist2}")
-            self.list1.append(f"{self.name} {hist2}")
+            kod = ["29", "33", "44", "25"]
+            kod_r = random.choice(kod)
+            tel_r = random.randrange(1111111, 9999999, 1)
+            print( f"Звонит {self.name}, +375({kod_r}){tel_r} Время {hist2}")
+
+            end_call = datetime.datetime.now()
+            call_time_1= end_call - start_call
+            self.call_time = call_time_1.total_seconds()
+            self.list1.append(f"{self.name} +375({kod_r}){tel_r} {hist2} {self.call_time}")
         else:
             print("Абанент занят")
 
 
-    def history_list(self):
+
+    def call_history(self):
         print(self.list1)
 
     def end_call(self):
         self.is_busy = False
+        print(f"Время разговора {self.call_time}")
         return self.is_busy
 
 
     def get_info(self):
         return (f"Бренд - {self.brand}, Модель - {self.model}, Год выпуска - {self.issue_year}, Разговор идет - {self.is_busy}")
 
+    def receive_sms(self,name,text):
+        self.name = name
+        self.text = text
+        hist1 = datetime.datetime.now()
+        hist2 = hist1.strftime("%H:%M:%S %d-%m-%Y")
+        self.sms.append(f"{self.name}  {hist2}  {self.text}")
+        return self.sms
 
+    def sms_histiry(self):
+        print(self.sms)
 
 a1= MobilePhone("Samsung","Max", 2020)
 a2 = MobilePhone("IPhon", "12Pro", 2021 )
 
 
+print(a2.__str__())
 a2.receive_call("Alex")
-time.sleep(3)
+time.sleep(1)
 a2.receive_call("Dima")
-time.sleep(2)
+time.sleep(1)
 a2.end_call()
 a2.receive_call("Vova")
-time.sleep(2)
+time.sleep(1)
 a2.receive_call("Marina")
 a2.end_call()
 a2.receive_call("Pedro")
 
-a2.history_list()
+a2.call_history()
 
+a2.receive_sms("Володя", "Сообщение 1")
+a2.receive_sms("Инокентий", "Сообщение 2")
+a2.receive_sms("Сергей", "Сообщение 3")
+a2.sms_histiry()
 
-
+print("---------")

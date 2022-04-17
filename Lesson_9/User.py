@@ -51,7 +51,7 @@ class User():
             self.login = login
         else:
             print("Неверный ввод Логина")
-
+        password_ok = "^[A-Za-z0-9_-]{3,5}$"
         if password == "1":
             pas = ''
             for x in range(5):
@@ -59,13 +59,13 @@ class User():
             self.password = pas
             print(f"Ваш пароль - {self.password} ")
 
-        password_ok = "^[A-Za-z0-9_-]{3,5}$"
-        if re.match(password_ok, password):
+
+        elif re.match(password_ok, password):
             self.password = password
         else:
             print("Неверный ввод пароля")
 
-        #self.password = password
+
         self.is_blocked = is_blocked
         self.subscription_date =subscription_date
         self.subscription_mode = subscription_mode

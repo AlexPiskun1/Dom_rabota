@@ -158,7 +158,7 @@ print(user1.get_info())
 #user1.check_subscr("20.04.2022")
 
 #user1.password_info()
-user1.change_pass("bbvd1Q1q")
+user1.change_pass("bbvd1Q1q1")
 
 
 

@@ -45,6 +45,21 @@ class User():
             return (f"ID - {i[0]}, Имя - {i[1]}, Логин - {i[2]}, Подписка до - {i[5]}, Тип подписки - {i[6]}, Заблокирован - {i[4]}")
 
 
+    def get_info_all(self):
+        db = sqlite3.connect("server.user.db")
+        sql = db.cursor()
+        for i in sql.execute(f"SELECT * FROM users_tv"):
+            print(f"ID - {i[0]}, Имя - {i[1]}, Логин - {i[2]}, Подписка до - {i[5]}, Тип подписки - {i[6]}, Заблокирован - {i[4]}")
+
+
+    def sub_active(self):
+        db = sqlite3.connect("server.user.db")
+        sql = db.cursor()
+        for i in sql.execute(
+                f"SELECT id, name, login, password, is_blocked, sub_date, sub_mode FROM users_tv WHERE is_blocked = 'Falce'"):
+                    print(
+                        f"ID - {i[0]}, Имя - {i[1]}, Логин - {i[2]}, Подписка до - {i[5]}, Тип подписки - {i[6]}, Заблокирован - {i[4]}")
+
     def password_info(self):
         db = sqlite3.connect("server.user.db")
         sql = db.cursor()
@@ -171,4 +186,8 @@ user1.bloc_not()
 user4.bloc_not()
 
 user2.change_pass("gL0R1qqq")
+user1.get_info_all()
 
+print("---------")
+
+user1.sub_active()

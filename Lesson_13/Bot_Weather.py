@@ -24,10 +24,5 @@ def send_text(message):
 
 
 
-   # print("Температура в ", sity, " : ", w.temperature('celsius')["temp"], "градусов")
-    #print("Ветер в ", sity, ": ", w.wind()["speed"], "м/с")
-    #print("Облачность в ", sity, ": ", w.clouds, "%")
-
-
 
 bot.polling(none_stop=True)

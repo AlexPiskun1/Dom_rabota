@@ -15,11 +15,11 @@ class User():
     subscription_mode: str
 
 
-    def __init__(self,__name,__login:str,subscription_date=datetime.date.today()+datetime.timedelta(days=30),
-                 subscription_mode = "Free",__password:str="1",is_blocked = False):
-        self.__check_name(__name)
-        self.__check_login(__login)
-        self.change_pass(__password)
+    def __init__(self,name,login:str,subscription_date=datetime.date.today()+datetime.timedelta(days=30),
+                 subscription_mode = "Free",password:str="1",is_blocked = False):
+        self.__check_name(name)
+        self.__check_login(login)
+        self.change_pass(password)
         self.is_blocked = is_blocked
         self.subscription_date =subscription_date
         self.subscription_mode = subscription_mode
@@ -60,6 +60,23 @@ class User():
                     print(
                         f"ID - {i[0]}, Имя - {i[1]}, Логин - {i[2]}, Подписка до - {i[5]}, Тип подписки - {i[6]}, Заблокирован - {i[4]}")
 
+    def sub_end(self):
+        db = sqlite3.connect("server.user.db")
+        sql = db.cursor()
+        for i in sql.execute(f"SELECT * FROM users_tv"):
+            a = datetime.datetime.strptime(i[5], "%Y-%m-%d") - datetime.datetime.today()
+            b = str(a)
+            c = b.split()[0]
+            if 0 < int(c) <= 10:
+                print(
+                    f"Заканчивается подписка: \nID - {i[0]}, Имя - {i[1]}, Логин - {i[2]}, Подписка до - {i[5]}, Тип подписки - {i[6]}, Заблокирован - {i[4]}")
+            elif int(c) < 0:
+                print(
+                    f"Подписка закончилась: \nID - {i[0]}, Имя - {i[1]}, Логин - {i[2]}, Подписка до - {i[5]}, Тип подписки - {i[6]}, Заблокирован - {i[4]}")
+            else:
+                pass
+
+
     def password_info(self):
         db = sqlite3.connect("server.user.db")
         sql = db.cursor()
@@ -94,18 +111,18 @@ class User():
         db.commit()
         return self.is_blocked
 
-    def __check_name(self,__name):
+    def __check_name(self,name):
         name_ok = "^([А-Я]{1}[а-яё]{1,23})$"
-        if re.match(name_ok, __name):
-             self.__name = __name
+        if re.match(name_ok, name):
+             self.__name = name
              return self.__name
         else:
             print("Неверный ввод имени")
 
-    def __check_login(self,__login):
+    def __check_login(self,login):
         login_ok = "^[A-Za-z0-9_-]{6,16}$"
-        if re.match(login_ok, __login):
-            self.__login = __login
+        if re.match(login_ok, login):
+            self.__login = login
             return self.__login
         else:
             print("Неверный ввод Логина")
@@ -123,9 +140,9 @@ class User():
             delta =data1-datetime.datetime.now()
             print(f"Подписка Активна, Вид подписки - {self.subscription_mode}  Осталось - {delta} ")
 
-    def change_pass(self,__password):
+    def change_pass(self,password):
         password_ok = "^(?=.*[0-9].*)(?=.*[a-z].*)(?=.*[A-Z].*)[0-9a-zA-Z]{8,}$"
-        if __password == "1":
+        if password == "1":
             pas = ''
             for x in range(8):
                 pas = pas + random.choice(list('1234567890abcdefghigklmnopqrstuvyxwzABCDEFGHIGKLMNOPQRSTUVYXWZ'))
@@ -136,8 +153,8 @@ class User():
 
 
         else:
-            if re.match(password_ok, __password):
-                self.__password = __password
+            if re.match(password_ok, password):
+                self.__password = password
                 db = sqlite3.connect("server.user.db")
                 sql = db.cursor()
                 sql.execute(f"UPDATE users_tv SET password = '{self.__password}' WHERE login = '{self.__login}'")
@@ -157,6 +174,7 @@ user1 = User("Саша","Weld_22", is_blocked= True,)
 user2= User("Билл","Bill_debil")
 user3 = User("Алекс","Nick_21")
 user4 = User("Дима","Dima_21", subscription_mode="Pay")
+user4 = User("Алеша","Leha_123", subscription_mode="Pay")
 
 
 print(user1.get_info())
@@ -191,3 +209,4 @@ user1.get_info_all()
 print("---------")
 
 user1.sub_active()
+user1.sub_end()

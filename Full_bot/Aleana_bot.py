@@ -8,10 +8,11 @@ bot = telebot.TeleBot(key_bot.key_bot())
 
 def kb_main(message, text = "Сделайте Ваш выбор"):
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    button1 = types.KeyboardButton("кнопка1")
-    button2 = types.KeyboardButton("кнопка2")
-    button3 = types.KeyboardButton("кнопка3")
-    kb.add(button1,button2,button3)
+    button1 = types.KeyboardButton("Контакты")
+    button2 = types.KeyboardButton("Режим работы")
+    button3 = types.KeyboardButton("Локация")
+    button4 = types.KeyboardButton("Заказать доставку")
+    kb.add(button1,button2,button3, button4)
     bot.send_message(message.chat.id,text,reply_markup=kb)
 
 def kb_0(message, text = " Продолжайте работу "):
@@ -54,16 +55,16 @@ def send_text(message):
             bot.send_message(message.chat.id, f"Добрый день,{message.from_user.first_name}, рад Вас слышать")
         elif text == 'admin':
             bot.send_message(message.chat.id, f"Добрый день,{message.from_user.first_name}, Вы вошли, как администратор")
-        elif text == "кнопка1":
-            bot.send_message(message.chat.id, f"Нажата кнопка 1")
-            kb_1(message)
-        elif text == "кнопка2":
-            #bot.send_message(message.chat.id, f"Нажата кнопка 2")
-            kb_inline_1(message)
+        elif text == "контакты":
+            bot.send_message(message.chat.id, f"A1 - +375(44)760-88-90\nМТС - +375(33)380-88-90\nгород - 8(01716)9-05-05\nсайт - aleana.by\ne-mail - weldbi@mail.ru")
+
+        elif text == "режим работы":
+            bot.send_message(message.chat.id, f"ПН-СУБ - 8.00-20.00\nВС - 9.00-18.00\nБез обеда")
+            #kb_inline_1(message)
 
 
-        elif text == "кнопка3":
-            kb_0(message)
+        elif text == "локация":
+            bot.send_message(message.chat.id, f"г.Фаниполь, ул.Мира, 1А магазин Алеана\nкоординаты 53.75278, 27.33639")
         elif text in ["кнопка4","кнопка5","кнопка6"]:
             kb_main(message)
 
@@ -86,7 +87,7 @@ def callback_InLine(call):
         if text == "1-1":
             bot.send_message(call.message.chat.id, "Ин кнопка1")
         else:
-            bot.send_message(call.message.chat.id, "ХЗ какая кнопка")
+            bot.edit_message_text("ХЗ какая кнопка", call.message.chat.id,call.message.message_id, reply_markup=None) # изменяет сообщение ( удаляет клавиатуру)
 
 
 bot.polling(none_stop=True)

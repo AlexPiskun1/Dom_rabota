@@ -30,13 +30,31 @@ def kb_1(message, text = "Сделайте Ваш выбор"):
     bot.send_message(message.chat.id,text,reply_markup=kb)
 
 def kb_inline_1(message, text = "Сделайте Ваш выбор"):
-    kb = types.InlineKeyboardMarkup(row_width=2)
-    button1 = types.InlineKeyboardButton("In1", callback_data="1-1")
-    button2 = types.InlineKeyboardButton("In2", callback_data="1-2")
-    button3 = types.InlineKeyboardButton("In2", callback_data="1-3")
+    kb = types.InlineKeyboardMarkup(row_width=1)
+    button1 = types.InlineKeyboardButton("Машина до 1т, до 4 м3", callback_data="1")
+    button2 = types.InlineKeyboardButton("Машина до 3.5т, до 18м3", callback_data="2")
+    button3 = types.InlineKeyboardButton("Манипулятор до 10т, 8 под", callback_data="3")
 
     kb.add(button1,button2,button3)
     bot.send_message(message.chat.id, text, reply_markup=kb)
+
+def kb_inline_time(message, text = "Выбирите время"):
+    kb = types.InlineKeyboardMarkup(row_width=1)
+    button1 = types.InlineKeyboardButton("9.00-10.00", callback_data="9")
+    button2 = types.InlineKeyboardButton("10.00-11.00", callback_data="10")
+    button3 = types.InlineKeyboardButton("11.00-12.00", callback_data="11")
+    button4 = types.InlineKeyboardButton("12.00-13.00", callback_data="12")
+    button5 = types.InlineKeyboardButton("13.00-14.00", callback_data="13")
+    button6 = types.InlineKeyboardButton("14.00-15.00", callback_data="14")
+    button7 = types.InlineKeyboardButton("15.00-16.00", callback_data="15")
+    button8 = types.InlineKeyboardButton("16.00-17.00", callback_data="16")
+    button9 = types.InlineKeyboardButton("17.00-18.00", callback_data="17")
+    button10 = types.InlineKeyboardButton("18.00-19.00", callback_data="18")
+    button11 = types.InlineKeyboardButton("19.00-20.00", callback_data="19")
+
+    kb.add(button1,button2,button3,button4,button5,button6,button7,button8,button9,button10,button11)
+    bot.send_message(message.chat.id, text, reply_markup=kb)
+
 
 
 
@@ -64,7 +82,11 @@ def send_text(message):
 
 
         elif text == "локация":
-            bot.send_message(message.chat.id, f"г.Фаниполь, ул.Мира, 1А магазин Алеана\nкоординаты 53.75278, 27.33639")
+            bot.send_message(message.chat.id, f"г.Фаниполь, ул.Мира, 1А\nМагазин Алеана\nкоординаты 53.75278, 27.33639")
+        elif text == "заказать доставку":
+            kb_inline_1(message)
+
+
         elif text in ["кнопка4","кнопка5","кнопка6"]:
             kb_main(message)
 
@@ -84,8 +106,15 @@ def get_stiker(message):
 def callback_InLine(call):
     if call.message:
         text = call.data
-        if text == "1-1":
-            bot.send_message(call.message.chat.id, "Ин кнопка1")
+        if text == "1":
+            bot.send_message(call.message.chat.id, "Форд Транзин АН5885-5 приедет к Вам")
+            kb_inline_time(call.message)
+        elif text == "2":
+            bot.send_message(call.message.chat.id, "Мерседес АВ4697-5 приедет к Вам")
+            kb_inline_time(call.message)
+        elif text == "3":
+            bot.send_message(call.message.chat.id, "Манипулятор Скания АТ2657-5 приедет к Вам")
+            kb_inline_time(call.message)
         else:
             bot.edit_message_text("ХЗ какая кнопка", call.message.chat.id,call.message.message_id, reply_markup=None) # изменяет сообщение ( удаляет клавиатуру)
 

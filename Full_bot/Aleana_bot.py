@@ -2,6 +2,8 @@
 import telebot
 from telebot import types
 import key_bot
+import sqlite3
+import re
 
 bot = telebot.TeleBot(key_bot.key_bot())
 
@@ -15,6 +17,14 @@ def kb_main(message, text = "Сделайте Ваш выбор"):
     kb.add(button1,button2,button3, button4)
     bot.send_message(message.chat.id,text,reply_markup=kb)
 
+def kb_main_1(message, text = "Сделайте Ваш выбор"):
+    kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    button1 = types.KeyboardButton("Контакты")
+    button2 = types.KeyboardButton("Режим работы")
+    button3 = types.KeyboardButton("Локация")
+    button4 = types.KeyboardButton("Начать сначала оформление доставки")
+    kb.add(button1,button2,button3, button4)
+    bot.send_message(message.chat.id,text,reply_markup=kb)
 def kb_0(message, text = " Продолжайте работу "):
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
     button1 = types.KeyboardButton("  ")
@@ -38,7 +48,7 @@ def kb_inline_1(message, text = "Сделайте Ваш выбор"):
     kb.add(button1,button2,button3)
     bot.send_message(message.chat.id, text, reply_markup=kb)
 
-def kb_inline_time(message, text = "Выбирите время"):
+def kb_inline_time(message, text = "Выберите время"):
     kb = types.InlineKeyboardMarkup(row_width=1)
     button1 = types.InlineKeyboardButton("9.00-10.00", callback_data="9")
     button2 = types.InlineKeyboardButton("10.00-11.00", callback_data="10")
@@ -60,14 +70,24 @@ def kb_inline_time(message, text = "Выбирите время"):
 
 @bot.message_handler(commands=['start'])
 def start_message(message):
-    bot.send_message(message.chat.id, f"Добро день, {message.from_user.first_name}, Я помогу ВАМ оформить доставку")
+    bot.send_message(message.chat.id, f"Добро день, {message.from_user.first_name}, Я жду Ваших команд")
     kb_main(message)
+
+    db = sqlite3.connect("aleana_server.db")
+    sql = db.cursor()
+    sql.execute(f"SELECT id FROM client WHERE id = '{message.from_user.id}'")
+    if sql.fetchone() is None:
+        sql.execute(
+            f"INSERT INTO client (id,user_name) VALUES( '{message.from_user.id}','{message.from_user.first_name}' )")
+        db.commit()
 
 
 
 @bot.message_handler(content_types=['text'])
 def send_text(message):
     text = message.text.lower()
+    date_ok = "\d{1,2}.\d{1,2}.\d{4}"
+
     try:
         if text in ["привет", "добрый день", "здоров", "hello", "hi"]:
             bot.send_message(message.chat.id, f"Добрый день,{message.from_user.first_name}, рад Вас слышать")
@@ -78,13 +98,22 @@ def send_text(message):
 
         elif text == "режим работы":
             bot.send_message(message.chat.id, f"ПН-СУБ - 8.00-20.00\nВС - 9.00-18.00\nБез обеда")
-            #kb_inline_1(message)
+
 
 
         elif text == "локация":
             bot.send_message(message.chat.id, f"г.Фаниполь, ул.Мира, 1А\nМагазин Алеана\nкоординаты 53.75278, 27.33639")
         elif text == "заказать доставку":
+            #kb_inline_1(message)
+           bot.send_message(message.chat.id, f"Введите желаемую дату\nв формате ХХ.ХХ.ХХХХ,\nнапример 01.12.2023")
+
+        elif re.match(date_ok, text):
+            kb_main_1(message)
             kb_inline_1(message)
+
+        elif text == "начать сначала оформление доставки":
+            kb_main(message)
+
 
 
         elif text in ["кнопка4","кнопка5","кнопка6"]:
@@ -92,7 +121,7 @@ def send_text(message):
 
 
         else:
-            bot.send_message(message.chat.id, f"{message.from_user.first_name}, сделайте свой выбор")
+            bot.send_message(message.chat.id, f"{message.from_user.first_name}, введены не верные данные, сделайте свой выбор")
 
     except Exception:
         bot.send_message(message.chat.id, "Вы ввели некорректные данные")
@@ -115,8 +144,11 @@ def callback_InLine(call):
         elif text == "3":
             bot.send_message(call.message.chat.id, "Манипулятор Скания АТ2657-5 приедет к Вам")
             kb_inline_time(call.message)
+        elif text == "9":
+
+            bot.send_message(call.message.chat.id, "9 - 10")
         else:
-            bot.edit_message_text("ХЗ какая кнопка", call.message.chat.id,call.message.message_id, reply_markup=None) # изменяет сообщение ( удаляет клавиатуру)
+            bot.edit_message_text("Опа что-то пошло не так....", call.message.chat.id,call.message.message_id, reply_markup=None) # изменяет сообщение ( удаляет клавиатуру)
 
 
 bot.polling(none_stop=True)

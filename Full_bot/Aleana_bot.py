@@ -4,6 +4,7 @@ from telebot import types
 import key_bot
 import sqlite3
 import re
+import datetime
 
 bot = telebot.TeleBot(key_bot.key_bot())
 
@@ -39,7 +40,7 @@ def kb_1(message, text = "Сделайте Ваш выбор"):
     kb.add(button1,button2,button3)
     bot.send_message(message.chat.id,text,reply_markup=kb)
 
-def kb_inline_1(message, text = "Сделайте Ваш выбор"):
+def kb_inline_1(message, text = "Выбираем машину"):
     kb = types.InlineKeyboardMarkup(row_width=1)
     button1 = types.InlineKeyboardButton("Машина до 1т, до 4 м3", callback_data="1")
     button2 = types.InlineKeyboardButton("Машина до 3.5т, до 18м3", callback_data="2")
@@ -48,7 +49,7 @@ def kb_inline_1(message, text = "Сделайте Ваш выбор"):
     kb.add(button1,button2,button3)
     bot.send_message(message.chat.id, text, reply_markup=kb)
 
-def kb_inline_time(message, text = "Выберите время"):
+def kb_inline_time(message, text = "Выберите время доставки"):
     kb = types.InlineKeyboardMarkup(row_width=1)
     button1 = types.InlineKeyboardButton("9.00-10.00", callback_data="9")
     button2 = types.InlineKeyboardButton("10.00-11.00", callback_data="10")
@@ -65,7 +66,12 @@ def kb_inline_time(message, text = "Выберите время"):
     kb.add(button1,button2,button3,button4,button5,button6,button7,button8,button9,button10,button11)
     bot.send_message(message.chat.id, text, reply_markup=kb)
 
-
+def kb_inline_file(message, text = "Выберите вид заказа"):
+    kb = types.InlineKeyboardMarkup(row_width=1)
+    button1 = types.InlineKeyboardButton("Загрузить фото заказа", callback_data="f")
+    button2 = types.InlineKeyboardButton("Заказать звонок менеджера", callback_data="c")
+    kb.add(button1,button2)
+    bot.send_message(message.chat.id, text, reply_markup=kb)
 
 
 @bot.message_handler(commands=['start'])
@@ -109,15 +115,18 @@ def send_text(message):
 
         elif re.match(date_ok, text):
             kb_main_1(message)
-            kb_inline_1(message)
+            if datetime.datetime.strptime(text, "%d.%m.%Y") >=datetime.datetime.today():
+                kb_inline_time(message)
+            else:
+                bot.send_message(message.chat.id, "Не верный ввод даты")
 
         elif text == "начать сначала оформление доставки":
             kb_main(message)
 
 
 
-        elif text in ["кнопка4","кнопка5","кнопка6"]:
-            kb_main(message)
+        #elif text in ["кнопка4","кнопка5","кнопка6"]:
+            #kb_main(message)
 
 
         else:
@@ -137,18 +146,77 @@ def callback_InLine(call):
         text = call.data
         if text == "1":
             bot.send_message(call.message.chat.id, "Форд Транзин АН5885-5 приедет к Вам")
-            kb_inline_time(call.message)
+            bot.edit_message_text("Продолжаем", call.message.chat.id, call.message.message_id, reply_markup=None)
+            kb_inline_file(call.message)
+
         elif text == "2":
             bot.send_message(call.message.chat.id, "Мерседес АВ4697-5 приедет к Вам")
-            kb_inline_time(call.message)
+            bot.edit_message_text("Продолжаем", call.message.chat.id, call.message.message_id, reply_markup=None)
+            kb_inline_file(call.message)
+
         elif text == "3":
             bot.send_message(call.message.chat.id, "Манипулятор Скания АТ2657-5 приедет к Вам")
-            kb_inline_time(call.message)
-        elif text == "9":
+            bot.edit_message_text("Продолжаем", call.message.chat.id, call.message.message_id, reply_markup=None)
+            kb_inline_file(call.message)
 
+        elif text == "9":
             bot.send_message(call.message.chat.id, "9 - 10")
+            bot.edit_message_text("Продолжаем", call.message.chat.id, call.message.message_id, reply_markup=None)
+            kb_inline_1(call.message)
+
+
+            #db = sqlite3.connect("aleana_server.db")
+            #sql = db.cursor()
+            #sql.execute(f"SELECT id FROM data WHERE id = '{call.message.from_user.id}'")
+
+
+        elif text == "10":
+                bot.send_message(call.message.chat.id, "10 - 11")
+                bot.edit_message_text("Продолжаем", call.message.chat.id, call.message.message_id, reply_markup=None)
+                kb_inline_1(call.message)
+        elif text == "11":
+                bot.send_message(call.message.chat.id, "11 - 12")
+                bot.edit_message_text("Продолжаем", call.message.chat.id, call.message.message_id, reply_markup=None)
+                kb_inline_1(call.message)
+        elif text == "12":
+                bot.send_message(call.message.chat.id, "12 - 13")
+                bot.edit_message_text("Продолжаем", call.message.chat.id, call.message.message_id, reply_markup=None)
+                kb_inline_1(call.message)
+        elif text == "13":
+                bot.send_message(call.message.chat.id, "13 - 14")
+                bot.edit_message_text("Продолжаем", call.message.chat.id, call.message.message_id, reply_markup=None)
+                kb_inline_1(call.message)
+        elif text == "14":
+                bot.send_message(call.message.chat.id, "14 - 15")
+                bot.edit_message_text("Продолжаем", call.message.chat.id, call.message.message_id, reply_markup=None)
+                kb_inline_1(call.message)
+        elif text == "15":
+                bot.send_message(call.message.chat.id, "15 - 16")
+                bot.edit_message_text("Продолжаем", call.message.chat.id, call.message.message_id, reply_markup=None)
+                kb_inline_1(call.message)
+        elif text == "16":
+                bot.send_message(call.message.chat.id, "16 - 17")
+                bot.edit_message_text("Продолжаем", call.message.chat.id, call.message.message_id, reply_markup=None)
+                kb_inline_1(call.message)
+        elif text == "17":
+                bot.send_message(call.message.chat.id, "17 - 18")
+                bot.edit_message_text("Продолжаем", call.message.chat.id, call.message.message_id, reply_markup=None)
+                kb_inline_1(call.message)
+        elif text == "18":
+                bot.send_message(call.message.chat.id, "18 - 19")
+                bot.edit_message_text("Продолжаем", call.message.chat.id, call.message.message_id, reply_markup=None)
+                kb_inline_1(call.message)
+        elif text == "19":
+                bot.send_message(call.message.chat.id, "19 - 20")
+                bot.edit_message_text("Продолжаем", call.message.chat.id, call.message.message_id, reply_markup=None)
+                kb_inline_1(call.message)
+        elif text == "f":
+            bot.edit_message_text("Загрузить файл", call.message.chat.id, call.message.message_id, reply_markup=None)
+        elif text == "c":
+            bot.edit_message_text("Звонок менеджера", call.message.chat.id, call.message.message_id, reply_markup=None)
+
         else:
-            bot.edit_message_text("Опа что-то пошло не так....", call.message.chat.id,call.message.message_id, reply_markup=None) # изменяет сообщение ( удаляет клавиатуру)
+            bot.send_message(call.message.chat.id,"Опа что-то пошло не так....")
 
 
 bot.polling(none_stop=True)

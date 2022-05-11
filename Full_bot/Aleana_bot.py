@@ -85,7 +85,20 @@ def start_message(message):
     if sql.fetchone() is None:
         sql.execute(
             f"INSERT INTO client (id,user_name) VALUES( '{message.from_user.id}','{message.from_user.first_name}' )")
+
         db.commit()
+
+    db = sqlite3.connect("aleana_server.db")
+    sql = db.cursor()
+    sql.execute(f"SELECT id_client FROM dostavka WHERE id_client = '{message.from_user.id}'")
+    if sql.fetchone() is None:
+        sql.execute(
+            f"INSERT INTO dostavka (id_client) VALUES( '{message.from_user.id}' )")
+
+        db.commit()
+
+
+
 
 
 
@@ -93,6 +106,7 @@ def start_message(message):
 def send_text(message):
     text = message.text.lower()
     date_ok = "\d{1,2}.\d{1,2}.\d{4}"
+    tel_ok = "^((8|\+7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$"
 
     try:
         if text in ["привет", "добрый день", "здоров", "hello", "hi"]:
@@ -115,10 +129,24 @@ def send_text(message):
 
         elif re.match(date_ok, text):
             kb_main_1(message)
+
+
             if datetime.datetime.strptime(text, "%d.%m.%Y") >=datetime.datetime.today():
                 kb_inline_time(message)
             else:
                 bot.send_message(message.chat.id, "Не верный ввод даты")
+
+        elif re.match(tel_ok, text):
+            db = sqlite3.connect("aleana_server.db")
+            sql = db.cursor()
+            sql.execute(f"UPDATE client SET tel = '{text}' WHERE id = '{message.from_user.id}'")
+
+
+            db.commit()
+            bot.send_message(message.chat.id, "Телефон для связи принят")
+
+            bot.send_message(message.chat.id, "Введите ваш адрес")
+
 
         elif text == "начать сначала оформление доставки":
             kb_main(message)
@@ -148,6 +176,8 @@ def callback_InLine(call):
             bot.send_message(call.message.chat.id, "Форд Транзин АН5885-5 приедет к Вам")
             bot.edit_message_text("Продолжаем", call.message.chat.id, call.message.message_id, reply_markup=None)
             kb_inline_file(call.message)
+
+
 
         elif text == "2":
             bot.send_message(call.message.chat.id, "Мерседес АВ4697-5 приедет к Вам")
@@ -211,12 +241,36 @@ def callback_InLine(call):
                 bot.edit_message_text("Продолжаем", call.message.chat.id, call.message.message_id, reply_markup=None)
                 kb_inline_1(call.message)
         elif text == "f":
-            bot.edit_message_text("Загрузить файл", call.message.chat.id, call.message.message_id, reply_markup=None)
+            bot.edit_message_text("Загрузите фото заказа", call.message.chat.id, call.message.message_id, reply_markup=None)
         elif text == "c":
             bot.edit_message_text("Звонок менеджера", call.message.chat.id, call.message.message_id, reply_markup=None)
+            bot.send_message(call.message.chat.id, f"Введите номер телефона\nВ формате 8(xxx)xxx-xx-xx\nбез пробелов")
+
+
+
 
         else:
             bot.send_message(call.message.chat.id,"Опа что-то пошло не так....")
+
+@bot.message_handler(content_types=["photo"])
+def photo(message):
+
+
+
+    idphoto = message.photo[0].file_id
+    db = sqlite3.connect("aleana_server.db")
+    sql = db.cursor()
+
+    sql.execute(f"UPDATE dostavka SET id_foto = '{idphoto}' WHERE id_client = '{message.from_user.id}'")
+    db.commit()
+    bot.send_message(message.chat.id, f"Введите номер телефона\nВ формате 8(xxx)xxx-xx-xx\nбез пробелов")
+
+
+    #bot.send_message(message.chat.id, f"Ваша заявка в обработке.\nСпасибо за заказ")
+    #kb_main(message)
+
+
+   #bot.send_photo(message.chat.id, idphoto ) # отправка файла фото
 
 
 bot.polling(none_stop=True)

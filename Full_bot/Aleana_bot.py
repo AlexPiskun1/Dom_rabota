@@ -73,6 +73,22 @@ def kb_inline_file(message, text = "Выберите вид заказа"):
     kb.add(button1,button2)
     bot.send_message(message.chat.id, text, reply_markup=kb)
 
+def kb_admin(message, text = "Сделайте Ваш выбор"):
+    kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    button1 = types.KeyboardButton("Заказы по дате")
+    button2 = types.KeyboardButton("Заказы по машинам")
+    button3 = types.KeyboardButton("Справочник клиентов")
+    kb.add(button1,button2,button3)
+    bot.send_message(message.chat.id,text,reply_markup=kb)
+
+def kb_admin_avto(message, text = "Сделайте Ваш выбор"):
+    kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    button1 = types.KeyboardButton("Форд")
+    button2 = types.KeyboardButton("Мерседес")
+    button3 = types.KeyboardButton("Скания")
+    kb.add(button1,button2,button3)
+    bot.send_message(message.chat.id,text,reply_markup=kb)
+
 def server_1(text,call):
     db = sqlite3.connect("aleana_server.db")
     sql = db.cursor()
@@ -106,6 +122,7 @@ def start_message(message):
 @bot.message_handler(commands=['admin'])
 def start_message(message):
     bot.send_message(message.chat.id, f"Добро день, {message.from_user.first_name}, Введите пароль")
+    kb_admin(message)
 
 
 
@@ -133,11 +150,16 @@ def send_text(message):
         elif text == "локация":
             bot.send_message(message.chat.id, f"г.Фаниполь, ул.Мира, 1А\nМагазин Алеана\nкоординаты 53.75278, 27.33639")
         elif text == "6666":
+            kb_admin(message)
+        elif text == "заказы по дате":
             bot.send_message(message.chat.id, f"Введите  дату\nв формате ХХ-ХХ-ХХХХ,\nнапример 01-12-2023")
+
+
 
         elif text == "заказать доставку":
             #kb_inline_1(message)
            bot.send_message(message.chat.id, f"Введите желаемую дату\nв формате ХХ.ХХ.ХХХХ,\nнапример 01.12.2023")
+
 
         elif re.match(date_admin, text):
             bot.send_message(message.chat.id, "Печатаю заказы")

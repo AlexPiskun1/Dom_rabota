@@ -73,6 +73,13 @@ def kb_inline_file(message, text = "Выберите вид заказа"):
     kb.add(button1,button2)
     bot.send_message(message.chat.id, text, reply_markup=kb)
 
+def kb_inline_adres(message, text = "Проверка адреса"):
+    kb = types.InlineKeyboardMarkup(row_width=1)
+    button1 = types.InlineKeyboardButton("Верно", callback_data="ok")
+    button2 = types.InlineKeyboardButton("Ввести еще раз", callback_data="no_ok")
+    kb.add(button1,button2)
+    bot.send_message(message.chat.id, text, reply_markup=kb)
+
 def kb_admin(message, text = "Сделайте Ваш выбор"):
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
     button1 = types.KeyboardButton("Заказы по дате")
@@ -122,13 +129,14 @@ def start_message(message):
 @bot.message_handler(commands=['admin'])
 def start_message(message):
     bot.send_message(message.chat.id, f"Добро день, {message.from_user.first_name}, Введите пароль")
-    kb_admin(message)
+
 
 
 
 
 @bot.message_handler(content_types=['text'])
 def send_text(message):
+    global wait_type
     text = message.text.lower()
     date_ok = "\d{1,2}.\d{1,2}.\d{4}"
     date_admin = "\d{1,2}-\d{1,2}-\d{4}"
@@ -167,9 +175,10 @@ def send_text(message):
 
             db = sqlite3.connect("aleana_server.db")
             sql = db.cursor()
-            for i in sql.execute(
-                    f"SELECT id, id_client, day, car, time, text  FROM data WHERE day = '{b}'"):
-                bot.send_message(message.chat.id,f"№ Заказа - {i[0]},\nID_клиента- {i[1]},\nДата - {i[2]},\nВремя - {i[4]},\nМашина - {i[3]},\n{i[5]}  ")
+            for i in sql.execute(f"SELECT id, id_client, day, car, time, text, id_foto  FROM data WHERE day = '{b}'"):
+                for r in sql.execute(f"SELECT tel, adress  FROM dostavka WHERE id_client = '{i[1]}'"):
+
+                    bot.send_message(message.chat.id,f"№ Заказа - {i[0]},\nID_клиента- {i[1]},\nДата - {i[2]},\nВремя - {i[4]},\nМашина - {i[3]},\n{i[5]},\nЗаказ - {i[6]}\nТелефон - {r[0]}\nАдрес - {r[1]} ")
 
         elif re.match(date_ok, text):
             kb_main_1(message)
@@ -200,15 +209,26 @@ def send_text(message):
             bot.send_message(message.chat.id, "Телефон для связи принят")
 
             bot.send_message(message.chat.id, "Введите ваш адрес")
+            wait_type = 1 # ждем ввода адреса
 
 
         elif text == "начать сначала оформление доставки":
             kb_main(message)
 
+        elif wait_type == 1:
+            b= text
+            bot.send_message(message.chat.id, f"Проверьте ваш адрес:\n{text}")
+            db = sqlite3.connect("aleana_server.db")
+            sql = db.cursor()
+            sql.execute(f"UPDATE dostavka SET adress = '{b}' WHERE id_client = '{message.from_user.id}'")
+            db.commit()
+            kb_inline_adres(message)
+            wait_type = 0  # обнуляем ожидание
 
 
-        #elif text in ["кнопка4","кнопка5","кнопка6"]:
-            #kb_main(message)
+
+
+
 
 
         else:
@@ -224,6 +244,7 @@ def get_stiker(message):
 
 @bot.callback_query_handler(func = lambda call: True)
 def callback_InLine(call):
+    global wait_type
     if call.message:
         text = call.data
         if text == "1":
@@ -270,83 +291,52 @@ def callback_InLine(call):
                 bot.send_message(call.message.chat.id, "10 - 11")
                 bot.edit_message_text("Продолжаем", call.message.chat.id, call.message.message_id, reply_markup=None)
                 kb_inline_1(call.message)
-
-                db = sqlite3.connect("aleana_server.db")
-                sql = db.cursor()
-                sql.execute(f"UPDATE data SET time = '10' WHERE id_client = '{call.from_user.id}'")
-                db.commit()
+                server_1(text, call)
         elif text == "11":
                 bot.send_message(call.message.chat.id, "11 - 12")
                 bot.edit_message_text("Продолжаем", call.message.chat.id, call.message.message_id, reply_markup=None)
                 kb_inline_1(call.message)
-                db = sqlite3.connect("aleana_server.db")
-                sql = db.cursor()
-                sql.execute(f"UPDATE data SET time = '11' WHERE id_client = '{call.from_user.id}'")
-                db.commit()
+                server_1(text,call)
         elif text == "12":
                 bot.send_message(call.message.chat.id, "12 - 13")
                 bot.edit_message_text("Продолжаем", call.message.chat.id, call.message.message_id, reply_markup=None)
                 kb_inline_1(call.message)
-                db = sqlite3.connect("aleana_server.db")
-                sql = db.cursor()
-                sql.execute(f"UPDATE data SET time = '12' WHERE id_client = '{call.from_user.id}'")
-                db.commit()
+                server_1(text,call)
         elif text == "13":
                 bot.send_message(call.message.chat.id, "13 - 14")
                 bot.edit_message_text("Продолжаем", call.message.chat.id, call.message.message_id, reply_markup=None)
                 kb_inline_1(call.message)
-                db = sqlite3.connect("aleana_server.db")
-                sql = db.cursor()
-                sql.execute(f"UPDATE data SET time = '13' WHERE id_client = '{call.from_user.id}'")
-                db.commit()
+                server_1(text,call)
         elif text == "14":
                 bot.send_message(call.message.chat.id, "14 - 15")
                 bot.edit_message_text("Продолжаем", call.message.chat.id, call.message.message_id, reply_markup=None)
                 kb_inline_1(call.message)
-                db = sqlite3.connect("aleana_server.db")
-                sql = db.cursor()
-                sql.execute(f"UPDATE data SET time = '14' WHERE id_client = '{call.from_user.id}'")
-                db.commit()
+                server_1(text,call)
         elif text == "15":
                 bot.send_message(call.message.chat.id, "15 - 16")
                 bot.edit_message_text("Продолжаем", call.message.chat.id, call.message.message_id, reply_markup=None)
                 kb_inline_1(call.message)
-                db = sqlite3.connect("aleana_server.db")
-                sql = db.cursor()
-                sql.execute(f"UPDATE data SET time = '15' WHERE id_client = '{call.from_user.id}'")
-                db.commit()
+                server_1(text,call)
         elif text == "16":
                 bot.send_message(call.message.chat.id, "16 - 17")
                 bot.edit_message_text("Продолжаем", call.message.chat.id, call.message.message_id, reply_markup=None)
                 kb_inline_1(call.message)
-                db = sqlite3.connect("aleana_server.db")
-                sql = db.cursor()
-                sql.execute(f"UPDATE data SET time = '16' WHERE id_client = '{call.from_user.id}'")
-                db.commit()
+                server_1(text,call)
         elif text == "17":
                 bot.send_message(call.message.chat.id, "17 - 18")
                 bot.edit_message_text("Продолжаем", call.message.chat.id, call.message.message_id, reply_markup=None)
                 kb_inline_1(call.message)
-                db = sqlite3.connect("aleana_server.db")
-                sql = db.cursor()
-                sql.execute(f"UPDATE data SET time = '17' WHERE id_client = '{call.from_user.id}'")
-                db.commit()
+                server_1(text,call)
         elif text == "18":
                 bot.send_message(call.message.chat.id, "18 - 19")
                 bot.edit_message_text("Продолжаем", call.message.chat.id, call.message.message_id, reply_markup=None)
                 kb_inline_1(call.message)
-                db = sqlite3.connect("aleana_server.db")
-                sql = db.cursor()
-                sql.execute(f"UPDATE data SET time = '18' WHERE id_client = '{call.from_user.id}'")
-                db.commit()
+                server_1(text,call)
         elif text == "19":
                 bot.send_message(call.message.chat.id, "19 - 20")
                 bot.edit_message_text("Продолжаем", call.message.chat.id, call.message.message_id, reply_markup=None)
                 kb_inline_1(call.message)
-                db = sqlite3.connect("aleana_server.db")
-                sql = db.cursor()
-                sql.execute(f"UPDATE data SET time = '19' WHERE id_client = '{call.from_user.id}'")
-                db.commit()
+                server_1(text, call)
         elif text == "f":
             bot.edit_message_text("Загрузите фото заказа", call.message.chat.id, call.message.message_id, reply_markup=None)
         elif text == "c":
@@ -359,6 +349,14 @@ def callback_InLine(call):
             db.commit()
 
             bot.send_message(call.message.chat.id, f"Введите номер телефона\nВ формате 8(xxx)xxx-xx-xx\nбез пробелов")
+
+        elif text == "ok":
+            bot.edit_message_text("Спасибо за Ваш заказ, мы обязательно свяжемся с Вами.", call.message.chat.id, call.message.message_id, reply_markup=None)
+
+
+        elif text == "no_ok":
+            bot.send_message(call.message.chat.id, f"Введите еще раз Ваш адрес")
+            wait_type = 1
 
 
 
